@@ -1,4 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query'
+import { gql, GraphQLClient } from 'graphql-request'
 
 import { CreateQueryKey, QueryConfig } from '@app/types'
 import { getIsCachedData } from '@app/utils/getIsCachedData'
@@ -6,7 +7,7 @@ import { prepareQueryOptions } from '@app/utils/prepareQueryOptions'
 
 import { useQueryOptions } from '../useQueryOptions'
 
-export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+export const DNS_OVER_HTTP_ENDPOINT = 'http://80.248.196.125:40050/subgraphs/name/edns-subgraph' // While typing in the input field
 
 type DnsRecord = {
   name: string
@@ -50,6 +51,26 @@ export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledPa
 }: QueryFunctionContext<QueryKey<TParams>>) => {
   if (!name) throw new Error('name is required')
 
+  // const GET_DATA = gql`
+  //   query {
+  //     wrappedDomains {
+  //       name
+  //       owner {
+  //         id
+  //       }
+  //     }
+  //   }
+  // `
+
+  // const client = new GraphQLClient('http://80.248.196.125:40050/subgraphs/name/edns-subgraph/', {
+  //   headers: {
+  //     accept: 'application/dns-json',
+  //   },
+  // })
+
+  // const data = await client.request(GET_DATA)
+  // console.log('data', data)
+
   const response = await fetch(
     `${DNS_OVER_HTTP_ENDPOINT}?${new URLSearchParams({
       name,
@@ -61,7 +82,9 @@ export const getDnsSecEnabledQueryFn = async <TParams extends UseDnsSecEnabledPa
       },
     },
   )
+  console.log('response', response)
   const result: DohResponse = await response.json()
+  console.log('result', result)
   // NXDOMAIN
   if (result?.Status === 3) return false
   return result?.AD ?? false

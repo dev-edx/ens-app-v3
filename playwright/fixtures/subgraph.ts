@@ -26,8 +26,9 @@ export const waitForSubgraph = (provider: Provider) => async () => {
   let count = 0
   do {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    const client = new GraphQLClient('http://localhost:8000/subgraphs/name/graphprotocol/ens')
+    const client = new GraphQLClient('http://80.248.196.125:40050/subgraphs/name/edns-subgraph')
     const res = await client.request(query)
+    console.log('res', res)
     wait = blockNumber > res._meta.block.number
     count += 1
     console.log(`subgraph: ${res._meta.block.number} -> ${blockNumber} ${!wait ? '[IN SYNC]' : ''}`)

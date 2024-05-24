@@ -591,11 +591,14 @@ const useBuildDropdownItems = (inputVal: string, history: HistoryItem[]) => {
   const { t } = useTranslation('common')
 
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
+  console.log('inputIsAddress', inputIsAddress)
 
   const { isValid, isETH, name } = useValidate({
     input: inputVal,
     enabled: !inputIsAddress && !inputVal,
   })
+
+  console.log('first', isValid, isETH, name)
 
   return useMemo(
     () =>
@@ -652,6 +655,7 @@ export const SearchInput = ({ size = 'extraLarge' }: { size?: 'medium' | 'extraL
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const dropdownItems = useBuildDropdownItems(inputVal, history)
+  console.log('dropdownItems', dropdownItems)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = useCallback(
